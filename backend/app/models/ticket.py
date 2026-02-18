@@ -8,7 +8,6 @@ import enum
 
 
 
-
 class TicketStatus(str,enum.Enum):
     open ="open"
     in_progress = "in_progress"
@@ -30,3 +29,5 @@ class Ticket(Base):
     priority: Mapped[TicketPriority] = mapped_column(Enum(TicketPriority),default = TicketPriority.medium,nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime,default = datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime,default = datetime.utcnow,onupdate=datetime.utcnow)
+
+

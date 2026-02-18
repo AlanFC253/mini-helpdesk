@@ -2,8 +2,11 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.db.session import get_db
+from app.api.routes.tickets import router as tickets_router
 
 app = FastAPI()
+app.include_router(tickets_router)
+
 
 @app.get("/health")
 def teste():
