@@ -1,6 +1,7 @@
 from datetime import datetime
 import enum
 from pydantic import BaseModel, Field
+from typing import List
 
 class TicketPriority(str,enum.Enum):
     low  = 'low'
@@ -23,6 +24,8 @@ class TicketUpdate(BaseModel):
     priority: TicketPriority | None = None
     status: TicketStatus | None = None
 
+
+
 class TicketOut(BaseModel):
     id: int
     title: str
@@ -34,3 +37,10 @@ class TicketOut(BaseModel):
 
     class Config:
         from_attributes = True
+
+class TicketListResponse(BaseModel):
+    items: List[TicketOut]
+    total: int
+    page: int
+    page_size: int
+    pages: int
