@@ -3,9 +3,11 @@ from sqlalchemy.orm import Session
 from math import ceil
 from app.db.session import get_db
 from app.models.ticket import Ticket
-from app.schemas.ticket import TicketCreate, TicketOut, TicketUpdate,TicketListResponse
+from app.schemas.ticket import TicketCreate, TicketOut, TicketUpdate,TicketListResponse,TicketStatus,TicketPriority
 from app.crud.ticket import list_tickets_paginated
 from typing import Literal
+from datetime import datetime
+
 
 router = APIRouter(prefix="/tickets",tags=["ticket"])
 
@@ -29,16 +31,22 @@ def create_ticket(payload: TicketCreate,db: Session = Depends(get_db)):
 
 # Gets
 @router.get("/", response_model=TicketListResponse)
-
 def list_tickets(
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100),
     sort: Literal["created_at", "updated_at", "priority"] = Query("created_at"),
     order: Literal["asc", "desc"] = Query("desc"),
     db: Session = Depends(get_db),
+    status: TicketStatus | None = Query(None),
+    priority: TicketPriority | None = Query(None),
+    created_from: datetime | None = Query(None),
+    created_to: datetime | None = Query(None),
 ):
+    
+    if created_from and created_to and created_from > created_to:
+        raise HTTPException(status_code=400, detail="created_from cannot be after created_to")
 
-    items, total, pages = list_tickets_paginated(db, page, page_size,sort,order)
+    items, total, pages = list_tickets_paginated(db, page, page_size,sort,order,status,priority,created_from,created_to)
 
 
     return {
@@ -46,7 +54,7 @@ def list_tickets(
     "total":total,
     "page": page,
     "page_size": page_size,
-    "pages":pages
+    "pages":pages,
     }
 
 
