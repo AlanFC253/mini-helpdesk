@@ -2,7 +2,17 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
 
-DATABASE_URL = "postgresql+psycopg://helpdesk:helpdesk@localhost:5432/helpdesk"
+import os
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, DeclarativeBase
+
+
+DATABASE_URL = os.getenv(
+    "DATABASE_URL",
+    "postgresql+psycopg://helpdesk:helpdesk@localhost:5432/minihelpdesk"
+)
+
 engine = create_engine(DATABASE_URL)
 
 SessionLocal = sessionmaker(
@@ -10,6 +20,7 @@ SessionLocal = sessionmaker(
     autocommit=False,
     autoflush=False
 )
+
 
 class Base(DeclarativeBase):
     pass

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtualenv
+venv/
+.env
+
+# Banco local / testes
+*.db
+test.db
+.pytest_cache/
+
+# Docker / logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# Projeto
+doc/
+docs/

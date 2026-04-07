@@ -1,14 +1,30 @@
+version: "3.9"
+
 services:
   db:
-    image: postgres:16-alpine
+    image: postgres:16
+    container_name: mini-helpdesk-db
+    restart: always
     environment:
-      POSTGRES_USER: helpdesk
-      POSTGRES_PASSWORD: helpdesk
-      POSTGRES_DB: helpdesk
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: ./backend
+    container_name: mini-helpdesk-api
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
 
 volumes:
-  pgdata:
+  postgres_data:
