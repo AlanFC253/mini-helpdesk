@@ -66,6 +66,13 @@ def get_id(id: int, db: Session=Depends(get_db)):
         raise HTTPException(status_code=404, detail="Ticket not found") 
     return ticket
 
+@router.get("/by-title/{title}", response_model=list[TicketOut])
+def get_by_title(title:str,db:Session=Depends(get_db)):
+    tickets = db.query(Ticket).filter(Ticket.title == title).all()
+
+    if not tickets:
+        raise HTTPException(status_code=404 , detail="Ticket not found")
+    return tickets
 
 # Patch
 
