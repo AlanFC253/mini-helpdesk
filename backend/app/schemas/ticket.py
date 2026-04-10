@@ -1,7 +1,8 @@
 from datetime import datetime
 import enum
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from typing import List
+
 
 class TicketPriority(str,enum.Enum):
     low  = 'low'
@@ -35,8 +36,7 @@ class TicketOut(BaseModel):
     created_at: datetime
     updated_at: datetime
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 class TicketListResponse(BaseModel):
     items: List[TicketOut]
