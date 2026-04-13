@@ -7,19 +7,23 @@ from app.schemas.ticket import TicketCreate, TicketOut, TicketUpdate,TicketListR
 from app.crud.ticket import list_tickets_paginated
 from typing import Literal
 from datetime import datetime
+from app.core.security import get_current_user
 
 
 router = APIRouter(prefix="/tickets",tags=["ticket"])
 
 
 #Post
-@router.post("/",response_model=TicketOut, status_code=201)
-def create_ticket(payload: TicketCreate,db: Session = Depends(get_db)):
-
+@router.post("/", response_model=TicketOut, status_code=201)
+def create_ticket(
+    payload: TicketCreate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
     new_ticket = Ticket(
-        title = payload.title,
-        description = payload.description,
-        priority = payload.priority
+        title=payload.title,
+        description=payload.description,
+        priority=payload.priority
     )
 
     db.add(new_ticket)
@@ -77,30 +81,38 @@ def get_by_title(title:str,db:Session=Depends(get_db)):
 # Patch
 
 @router.patch("/{id}", response_model=TicketOut)
-def update_ticket(id:int,payload:TicketUpdate, db: Session = Depends(get_db)):
-    ticket = db.get(Ticket,id)
+def update_ticket(
+    id: int,
+    payload: TicketUpdate,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    ticket = db.get(Ticket, id)
 
     if not ticket:
-        raise HTTPException(status_code=404,detail="Ticket not found")
-    
+        raise HTTPException(status_code=404, detail="Ticket not found")
+
     update_data = payload.model_dump(exclude_unset=True)
 
-    for field,value in update_data.items():
-        setattr(ticket,field,value)  
+    for field, value in update_data.items():
+        setattr(ticket, field, value)
 
     db.commit()
     db.refresh(ticket)
     return ticket
 
 #Delete
-@router.delete("/{id}",status_code=204)
-def delete_ticket(id:int,db: Session=Depends(get_db)):
-
-    ticket = db.get(Ticket,id)
+@router.delete("/{id}", status_code=204)
+def delete_ticket(
+    id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    ticket = db.get(Ticket, id)
 
     if not ticket:
-        raise HTTPException(status_code=404,detail="Ticket not found")
-    
+        raise HTTPException(status_code=404, detail="Ticket not found")
+
     db.delete(ticket)
     db.commit()
 

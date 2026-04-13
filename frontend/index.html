@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Helpdesk App</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="container">
+    <header class="topbar">
+      <div>
+        <h1>Mini Helpdesk</h1>
+        <p>App consumindo sua API local</p>
+      </div>
+
+      <div class="auth-box">
+        <span id="authStatus">Não autenticado</span>
+        <button id="logoutBtn" class="secondary hidden">Logout</button>
+      </div>
+    </header>
+
+    <section class="panel">
+      <h2>Login</h2>
+      <form id="loginForm" class="grid-form">
+        <div>
+          <label for="username">Usuário</label>
+          <input id="username" name="username" type="text" value="admin" required />
+        </div>
+
+        <div>
+          <label for="password">Senha</label>
+          <input id="password" name="password" type="password" value="123456" required />
+        </div>
+
+        <div class="full">
+          <button type="submit">Entrar</button>
+        </div>
+      </form>
+      <p id="loginMessage" class="message"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Filtros</h2>
+
+      <form id="filtersForm" class="grid-form">
+        <div>
+          <label for="status">Status</label>
+          <select id="status" name="status">
+            <option value="">Todos</option>
+            <option value="open">open</option>
+            <option value="in_progress">in_progress</option>
+            <option value="closed">closed</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="priority">Prioridade</label>
+          <select id="priority" name="priority">
+            <option value="">Todas</option>
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="sort">Ordenar por</label>
+          <select id="sort" name="sort">
+            <option value="created_at">created_at</option>
+            <option value="updated_at">updated_at</option>
+            <option value="priority">priority</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="order">Ordem</label>
+          <select id="order" name="order">
+            <option value="desc">desc</option>
+            <option value="asc">asc</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="page_size">Itens por página</label>
+          <select id="page_size" name="page_size">
+            <option value="5">5</option>
+            <option value="10" selected>10</option>
+            <option value="20">20</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="created_from">Criado de</label>
+          <input id="created_from" name="created_from" type="datetime-local" />
+        </div>
+
+        <div>
+          <label for="created_to">Criado até</label>
+          <input id="created_to" name="created_to" type="datetime-local" />
+        </div>
+
+        <div class="full actions-row">
+          <button type="submit">Aplicar filtros</button>
+          <button type="button" id="clearFiltersBtn" class="secondary">Limpar filtros</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <h2>Criar ticket</h2>
+
+      <form id="createTicketForm" class="grid-form">
+        <div>
+          <label for="title">Título</label>
+          <input id="title" name="title" type="text" required />
+        </div>
+
+        <div>
+          <label for="ticket_priority">Prioridade</label>
+          <select id="ticket_priority" name="priority" required>
+            <option value="low">low</option>
+            <option value="medium" selected>medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="description">Descrição</label>
+          <textarea id="description" name="description" rows="4"></textarea>
+        </div>
+
+        <div class="full">
+          <button type="submit">Criar ticket</button>
+        </div>
+      </form>
+
+      <p id="createMessage" class="message"></p>
+    </section>
+
+    <section class="panel">
+      <h2>Editar ticket</h2>
+
+      <form id="editTicketForm" class="grid-form hidden">
+        <input type="hidden" id="edit_id" name="id" />
+
+        <div>
+          <label for="edit_title">Título</label>
+          <input id="edit_title" name="title" type="text" required />
+        </div>
+
+        <div>
+          <label for="edit_priority">Prioridade</label>
+          <select id="edit_priority" name="priority" required>
+            <option value="low">low</option>
+            <option value="medium">medium</option>
+            <option value="high">high</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="edit_status">Status</label>
+          <select id="edit_status" name="status" required>
+            <option value="open">open</option>
+            <option value="in_progress">in_progress</option>
+            <option value="closed">closed</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label for="edit_description">Descrição</label>
+          <textarea id="edit_description" name="description" rows="4"></textarea>
+        </div>
+
+        <div class="full actions-row">
+          <button type="submit">Salvar edição</button>
+          <button type="button" id="cancelEditBtn" class="secondary">Cancelar</button>
+        </div>
+      </form>
+
+      <p id="editMessage" class="message"></p>
+    </section>
+
+    <section class="panel">
+      <div class="tickets-header">
+        <h2>Tickets</h2>
+
+        <div class="pagination-controls">
+          <button id="prevPageBtn" class="secondary">Anterior</button>
+          <button id="nextPageBtn" class="secondary">Próxima</button>
+        </div>
+      </div>
+
+      <div id="ticketsMeta" class="meta-box">
+        <p>Nenhum dado carregado ainda.</p>
+      </div>
+
+      <div id="ticketsContainer">
+        <p>Nenhum ticket carregado ainda.</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

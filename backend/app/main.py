@@ -2,12 +2,13 @@ import logging
 import time
 
 from fastapi import FastAPI, Depends, Request
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
 from app.db.session import get_db
 from app.api.routes.tickets import router as tickets_router
-
+from app.api.routes.auth import router as auth_router
 
 logging.basicConfig(
     level=logging.INFO,
@@ -17,7 +18,17 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(tickets_router)
+app.include_router(auth_router)
 
 
 @app.middleware("http")
